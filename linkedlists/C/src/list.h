@@ -5,8 +5,7 @@
 typedef struct list {
     Node_t* head;
     uint32_t size;
-
-    //??
+    
 } List_t;
 
 Node_t* createNode(uint32_t val);
@@ -18,6 +17,7 @@ void destroyList(List_t*);
 
 // GET
 Node_t* getNode(List_t*, uint32_t pos);
+uint32_t at(List_t*, uint32_t pos);
 
 // ADD
 void addFirst(List_t*, uint32_t val);

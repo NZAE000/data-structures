@@ -55,6 +55,11 @@ Node_t* getNode(List_t* list, uint32_t pos)
     return current_node;
 }
 
+uint32_t at(List_t* list, uint32_t pos)
+{
+    return getNode(list, pos)->value;
+}
+
 // ADD ################################################
 
 void addFirst(List_t* list, uint32_t val)
@@ -103,9 +108,8 @@ void addLast(List_t* list, uint32_t val)
 
 void add(List_t* list, uint32_t val, uint32_t pos)
 {
-    if      (pos == 0)          addFirst(list, val);
-    else if (pos >= list->size) return;
-    else
+    if      (pos == 0) addFirst(list, val);
+    else if (pos < list->size)
     {
         // Add pos 2:
         //     node1 -> node2 -> node3 -> node4 -> null
@@ -138,13 +142,12 @@ void dropFirst(List_t* list)
     //       ^        ^
     //     DROP!     head
     //
-    if (!list->head) return;
-    else{
+    if (list->head){
         Node_t* to_drop = list->head;
         list->head      = list->head->next;
         dropNode(to_drop);
+        --list->size;
     }
-    --list->size;
 }
 
 void dropLast(List_t* list)
@@ -173,10 +176,8 @@ void dropLast(List_t* list)
 
 void drop(List_t* list, uint32_t pos)
 {
-    if      (pos == 0)          dropFirst(list);
-    else if (pos >= list->size) return;
-    else
-    {
+    if      (pos == 0) dropFirst(list);
+    else if (pos < list->size){
         // Drop pos 2
         //     node1 -> node2 -> node3 -> node4 -> null
         //       ^                 ^        

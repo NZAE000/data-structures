@@ -3,7 +3,7 @@
 
 int main(void)
 {   
-    const uint32_t n_nodes = 5;
+    const uint32_t n_nodes = 10;
     List_t list = {.head=NULL, .size=0};
 
     for (uint32_t i=0; i<n_nodes; ++i){
@@ -12,7 +12,7 @@ int main(void)
     }
     
     show(&list);
-    add(&list, 1, 9);
+    add(&list, 3, 9);
     show(&list);
 
     dropFirst(&list);

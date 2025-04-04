@@ -2,6 +2,7 @@
 #include "node.hpp"
 #include<iostream>
 
+template<typename TYPE>
 struct List_t {
 
     void show()        const noexcept;
@@ -10,9 +11,14 @@ struct List_t {
 
 // Operators /////////////////////////////
 
-    void add_begin(uint32_t);
-    void add_end(uint32_t);
-    void add(uint32_t, std::size_t);
+    template<typename TYPE2>
+    void add_begin(TYPE2&&);
+
+    template<typename TYPE2>
+    void add_end(TYPE2&&);
+
+    template<typename TYPE2>
+    void add(TYPE2&&, std::size_t);
 
     void erase_begin();
     void erase_end();
@@ -20,15 +26,17 @@ struct List_t {
 
 // Overloading operators
 
-    //void operator[](uint32_t);
+    TYPE&       operator[](std::size_t);
+    TYPE const& operator[](std::size_t) const;
 
 private:
-    Node_t*     _head{nullptr};
-    std::size_t _size{0};
+    Node_t<TYPE>* _head{nullptr};
+    std::size_t   _size{0};
 
-    Node_t& createNode(uint32_t);
-    void    dropNode(Node_t&);
+    template<typename TYPE2>
+    Node_t<TYPE>& createNode(TYPE2&&);
+    void dropNode(Node_t<TYPE>&);
 
-    Node_t*       getNode(std::size_t);
-    const Node_t* getNode(std::size_t) const;
+    Node_t<TYPE>*       getNode(std::size_t);
+    const Node_t<TYPE>* getNode(std::size_t) const;
 };

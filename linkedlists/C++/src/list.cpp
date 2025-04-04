@@ -1,23 +1,27 @@
 #include "list.hpp"
+#include <stdexcept>
 
-
-Node_t& List_t::
-createNode(uint32_t val)
+template<typename TYPE>
+template<typename TYPE2>
+Node_t<TYPE>& List_t<TYPE>::
+createNode(TYPE2&& val)
 {
-    Node_t* node { new Node_t{val} };
+    Node_t<TYPE>* node { new Node_t<TYPE>{static_cast<TYPE>(val)} };
     return *node;
 }
 
-void List_t::
-dropNode(Node_t& node)
+template<typename TYPE>
+void List_t<TYPE>::
+dropNode(Node_t<TYPE>& node)
 {
     delete &node;
 }
 
-void List_t::
+template<typename TYPE>
+void List_t<TYPE>::
 destroy()
 {
-    Node_t* to_drop{nullptr};
+    Node_t<TYPE>* to_drop{nullptr};
     while(this->_head){
         to_drop    = this->_head;
         this->_head = this->_head->_next;
@@ -25,10 +29,11 @@ destroy()
     }
 }
 
-void List_t::
+template<typename TYPE>
+void List_t<TYPE>::
 show() const noexcept
 {
-    Node_t* current_node { this->_head };
+    Node_t<TYPE>* current_node { this->_head };
     while (current_node)
     {
         std::cout<< current_node->_value << " ";
@@ -40,10 +45,11 @@ show() const noexcept
 
 // GET /////////////////////////////////////////////////
 
-const Node_t* List_t::
+template<typename TYPE>
+const Node_t<TYPE>* List_t<TYPE>::
 getNode(std::size_t pos) const
 {
-    Node_t* current_node {nullptr};
+    Node_t<TYPE>* current_node {nullptr};
 
     if (pos < this->_size){
         current_node = this->_head;
@@ -52,17 +58,20 @@ getNode(std::size_t pos) const
     }
     return current_node;
 }
-Node_t* List_t::
+template<typename TYPE>
+Node_t<TYPE>* List_t<TYPE>::
 getNode(std::size_t pos)
 {   
-    auto const* node = const_cast<const List_t*>(this)->getNode(pos);
-    return const_cast<Node_t*>(node);
+    auto const* node = const_cast<const List_t<TYPE>*>(this)->getNode(pos);
+    return const_cast<Node_t<TYPE>*>(node);
 }
 
 // ADD /////////////////////////////////////////////////
 
-void List_t::
-add_begin(uint32_t val)
+template<typename TYPE>
+template<typename TYPE2>
+void List_t<TYPE>::
+add_begin(TYPE2&& val)
 {
     auto& node { createNode(val) };
 
@@ -76,26 +85,31 @@ add_begin(uint32_t val)
     ++this->_size;
 }
 
-void List_t::
-add_end(uint32_t val)
+template<typename TYPE>
+template<typename TYPE2>
+void List_t<TYPE>::
+add_end(TYPE2&& val)
 {
     auto& node { createNode(val) };
 
     if (!this->_head) this->_head = &node;
     else{
-        Node_t* last_node = getNode(this->_size-1);
+        Node_t<TYPE>* last_node = getNode(this->_size-1);
         last_node->_next = &node;
     }
     ++this->_size;
 }
-void List_t:: 
-add(uint32_t val, std::size_t pos)
+
+template<typename TYPE>
+template<typename TYPE2>
+void List_t<TYPE>:: 
+add(TYPE2&& val, std::size_t pos)
 {
     if (pos == 0) add_begin(val);
     else if (pos < this->_size)
     {
-        Node_t& node { createNode(val) };
-        Node_t* previous_node = getNode(pos-1);
+        Node_t<TYPE>& node { createNode(val) };
+        Node_t<TYPE>* previous_node = getNode(pos-1);
         node._next = previous_node->_next;
         previous_node->_next = &node;
         ++this->_size;
@@ -103,41 +117,42 @@ add(uint32_t val, std::size_t pos)
 }
 
 // DROP /////////////////////////////////////////////////
-
-void List_t::
+template<typename TYPE>
+void List_t<TYPE>::
 erase_begin()
 {
     if (!this->_head) return;
     else
     {
-        Node_t& to_drop { *this->_head };
+        Node_t<TYPE>& to_drop { *this->_head };
         this->_head = this->_head->_next;
         dropNode(to_drop);
         --this->_size;
     }
 }
-
-void List_t::
+template<typename TYPE>
+void List_t<TYPE>::
 erase_end()
 {
     if (!this->_head) return;
     else if (!this->_head->_next) dropNode(*this->_head);
     else
     {
-        Node_t* penultimate_node = getNode(this->_size-2);
+        Node_t<TYPE>* penultimate_node = getNode(this->_size-2);
         dropNode(*penultimate_node->_next);
         penultimate_node->_next = nullptr;
     }
 }
 
-void List_t::
+template<typename TYPE>
+void List_t<TYPE>::
 erase(std::size_t pos)
 {
     if (pos == 0) erase_begin();
     if (pos < this->_size)
     {
-        Node_t* previus_node = getNode(pos-1);
-        Node_t& to_drop      = *previus_node->_next;
+        Node_t<TYPE>* previus_node = getNode(pos-1);
+        Node_t<TYPE>& to_drop      = *previus_node->_next;
         previus_node->_next  =  previus_node->_next->_next;
         dropNode(to_drop);
     }
@@ -145,9 +160,19 @@ erase(std::size_t pos)
 
 // OVERLOADING OPERATORS /////////////////////////
 
-//void List_t::
-//operator[](uint32_t pos)
-//{
-//    
-//}
+template<typename TYPE>
+TYPE const& List_t<TYPE>::
+operator[](std::size_t pos) const
+{
+    auto const* node = getNode(pos);
+    if (!node) throw std::runtime_error("access out of range");
+    return node->_value;
+}
 
+template<typename TYPE>
+TYPE& List_t<TYPE>::
+operator[](std::size_t pos)
+{
+    auto& elem = const_cast<List_t<TYPE> const*>(this)->operator[](pos);
+    return const_cast<TYPE&>(elem);
+}

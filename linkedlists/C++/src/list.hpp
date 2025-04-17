@@ -11,6 +11,15 @@ struct List_t {
 
 // Operators /////////////////////////////
 
+    /*  template<typename TYPE2> <====
+
+        Template to enable universal references (&&), 
+        know whether it is used as an l-value or r-value, 
+        depending on whether the argument is passed 
+        as an lvalue or r-value. 
+        (https://isocpp.org/blog/2012/11/universal-references-in-c11-scott-meyers)
+    */
+
     template<typename TYPE2>
     void add_begin(TYPE2&&);
 
@@ -24,8 +33,9 @@ struct List_t {
     void erase_end();
     void erase(std::size_t);
 
-// Overloading operators
 
+// Overloading operators: sugar syntax for applying operators 
+// (Let "this" be an instance of the class. It is possible to call this operator as this.operator[](3), but calling it "this[3]" also looks good in that.)
     TYPE&       operator[](std::size_t);
     TYPE const& operator[](std::size_t) const;
 

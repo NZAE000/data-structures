@@ -2,3 +2,7 @@ linkedlists/C/*.o
 linkedlists/C/exec
 linkedlists/C++/exec
 linkedlists/C++/*.o
+queue/*.o
+queue/exec
+stack/*.o
+stack/exec

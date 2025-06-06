@@ -1,41 +1,49 @@
 #include"graph.hpp"
 #include<iostream>
-#include<memory>
 
 namespace TDA {
 
 
 template<typename T>
-void Graph_t<T>::addVertex(const T& value) 
+std::shared_ptr<Vertex_t<T>> Graph_t<T>::
+addVertex(T const& value) 
 {
-    if (vertices.find(value) == vertices.end()) {
-        vertices[value] = std::make_shared<Vertex<T>>(value);
+
+    std::shared_ptr<Vertex_t<T>> vertex {nullptr};
+    auto iterator = _vertices.find(&value); // This internally calls: PtrValueHash<T> to locate the bucket and PtrValueEqual<T> to compare with already stored keys.
+
+    if (iterator == _vertices.end())
+    {
+        vertex = std::make_shared<Vertex_t<T>>(*const_cast<T*>(&value));
+        _vertices[&value] = vertex; // This internally calls: PtrValueHash<T>::operator() to calculate the bucket and PtrValueEqual<T>::operator() to compare if an "equivalent" key already exists.
     }
+    else vertex = (*iterator).second;
+
+    return vertex;
 }
 
 
 template<typename T>
-void Graph_t<T>::addEdge(const T& from, const T& to, double weight, bool undirected) 
+void Graph_t<T>::
+addEdge(T const& from, T const& to, double weight, bool undirected) 
 {
-    addVertex(from);
-    addVertex(to);
+    auto v_from = addVertex(from);
+    auto v_to   = addVertex(to);
 
-    auto fromVertex = vertices[from];
-    auto toVertex = vertices[to];
-
-    fromVertex->neighbors.emplace_back(toVertex, weight);
+    v_from->_neighbors.emplace_back(v_to, weight);
     if (undirected) {
-        toVertex->neighbors.emplace_back(fromVertex, weight);
+        v_to->_neighbors.emplace_back(v_from, weight);
     }
 }
 
 template<typename T>
-void Graph_t<T>::printGraph() const 
+void Graph_t<T>::
+printGraph() const 
 {
-    for (const auto& [key, vertex] : vertices) {
-        std::cout << vertex->value << " -> ";
-        for (const auto& [neighbor, weight] : vertex->neighbors) {
-            std::cout << "(" << neighbor->value << ", weight=" << weight << ") ";
+    for (const auto& [key, vertex] : _vertices) {
+        std::cout << vertex->_value << " -> ";
+        for (const auto& [neighbor, weight] : vertex->_neighbors) {
+            std::cout << "(" << neighbor->_value << ", weight=" << weight << ") ";
         }
         std::cout << '\n';
     }

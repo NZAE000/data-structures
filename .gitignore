@@ -8,3 +8,4 @@ stack/*.o
 stack/exec
 graph/*.o
 graph/exec
+exec

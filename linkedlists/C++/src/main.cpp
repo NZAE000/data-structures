@@ -4,10 +4,10 @@
 int 
 main(void)
 {
-    List_t<uint32_t> list{};
+    List_t<int32_t> list{};
     constexpr std::size_t n_nodes {10};
 
-    for (uint32_t i=0; i<n_nodes; ++i){
+    for (int32_t i=0; i<n_nodes; ++i){
         list.add_begin(i);
         list.add_end(i);
     }

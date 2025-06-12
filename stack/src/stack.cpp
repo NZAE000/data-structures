@@ -16,7 +16,7 @@ template<typename TYPE2>
 Node_t<TYPE>& Stack_t<TYPE>::
 createNode(TYPE2&& val)
 {
-    Node_t<TYPE>* node { new Node_t<TYPE>{static_cast<TYPE>(val)} };
+    Node_t<TYPE>* node { new Node_t<TYPE>{std::forward<TYPE2>(val)} };
     return *node;
 }
 

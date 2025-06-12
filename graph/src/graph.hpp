@@ -66,6 +66,9 @@ struct Graph_t {
     template<typename T1>
     void addEdge(T1&& from, T1&& to, double weight, bool undirected = false);
 
+    template<typename T1>
+    void DFS(T1 const& begin, T1 const& tarjet) const;
+
     friend std::ostream& operator<<(std::ostream& os, Graph_t<T> const& g)
     {
         for (const auto& [key, vertex] : g._vertices) {

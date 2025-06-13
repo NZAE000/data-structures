@@ -66,7 +66,7 @@ DFS(T1&& b, T1&& t)
 
     auto it_begin  = _vertices.find(&begin);
     auto it_tarjet = _vertices.find(&tarjet);
-    assert(it_begin  != end(_vertices) && "[DFS]: begin value not found.");
+    assert(it_begin  != end(_vertices) && "[DFS]: begin value not found."); // Verify with debug. All assert disappears without debugging.
     assert(it_tarjet != end(_vertices) && "[DFS]: tarjet value not found.");
 
     Vertex_t& v_begin  = *(*it_begin).second.get();
@@ -79,17 +79,17 @@ DFS(T1&& b, T1&& t)
 
 template<typename T>
 void Graph_t<T>::
-DFS_impl(Vertex_t& v_begin, Vertex_t& v_target, Stack_t<Vertex_t*>& stack)
+DFS_impl(Vertex_t& v_begin, Vertex_t& v_target, Stack_t<Vertex_t*>& stack) // DFS Implementation.
 {
-
-    v_begin._visited = 1;
-    std::cout<<v_begin._value<<" ";
-    if (v_begin._value == v_target._value) { std::cout<<"!"; }
-
+    if (!v_begin._visited){
+        v_begin._visited = 1;
+        std::cout<<v_begin._value<<" ";
+        if (v_begin._value == v_target._value) { std::cout<<"!"; }
+    }
     //stack.push(&v_begin);
     //stack.show();
 
-    for (auto const& neighbor : v_begin._neighbors){
+    for (auto& neighbor : v_begin._neighbors){
         Vertex_t* v_neighbor  = neighbor.first.get();
         if (!v_neighbor->_visited){
             //std::cout<<v_begin._value<<"-"<<v_neighbor->_value <<'\n';
@@ -105,7 +105,7 @@ template<typename T1>
 void Graph_t<T>::
 BFS(T1&& b, T1&& t)
 {  
-    T begin  { std::forward<T1>(b) };
+    T begin  { std::forward<T1>(b) }; // Perfect forwarding (to L or R-values).
     T tarjet { std::forward<T1>(t) };
 
     auto it_begin  = _vertices.find(&begin);
@@ -122,23 +122,31 @@ BFS(T1&& b, T1&& t)
 
 template<typename T>
 void Graph_t<T>::
-BFS_impl(Vertex_t& v_begin, Vertex_t& v_target, Queue_t<Vertex_t*>& queque)
+BFS_impl(Vertex_t& v_begin, Vertex_t& v_target, Queue_t<Vertex_t*>& queque) // BFS Implementation.
 {
-    v_begin._visited = 1;
-    std::cout<<v_begin._value<<" ";
-    if (v_begin._value == v_target._value) { std::cout<<"!"; }
+    if (!v_begin._visited){
+        v_begin._visited = 1;
+        std::cout<<v_begin._value<<" ";
+        if (v_begin._value == v_target._value) { std::cout<<"!"; }
+    }
 
-    for (auto const& neighbor : v_begin._neighbors){
+    for (auto& neighbor : v_begin._neighbors){
         Vertex_t* v_neighbor = neighbor.first.get();
-        if (!v_neighbor->_visited) queque.enqueue(v_neighbor);
+        if (!v_neighbor->_visited) {
+            std::cout<<v_begin._value<<"-"<<v_neighbor->_value <<'\n';
+            queque.enqueue(v_neighbor);
+        }
     }
 
-    Vertex_t** v_first = queque.get();
-    if (v_first){
-        std::cout<<"aca: "<<(*v_first)->_value;
+    //queque.show();
+    Vertex_t** v_first_2ptr = queque.get();
+    if (v_first_2ptr){
+        Vertex_t* v_first = *v_first_2ptr; // Copy address before dequeue!!.
         queque.dequeue();
-        BFS_impl(**v_first, v_target, queque);
+        //queque.show();
+        BFS_impl(*v_first, v_target, queque);
     }
+    //else { std::cout <<"mmm"; }
 }
 
 }

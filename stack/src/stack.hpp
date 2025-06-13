@@ -1,6 +1,5 @@
 #pragma once
-
-#include"node.hpp"
+#include "../../linkedlists/C++/src/node.hpp"
 
 namespace TDA {
 

@@ -55,7 +55,7 @@ void Queue_t<TYPE>::dequeue()
         Node_t<TYPE>* node = this->_head;
         this->_head = this->_head->_next;
         dropNode(*node);
-
+        node = nullptr;
         if (!this->_head) this->_end = nullptr; // Update last to null.
         --_size;
     }

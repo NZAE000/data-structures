@@ -1,6 +1,5 @@
 #include"graph.hpp"
 #include<cassert>
-#include "../../stack/src/stack.cpp"
 
 namespace TDA {
 
@@ -10,15 +9,10 @@ Graph_t<T>::Graph_t(std::vector<T> const& values, std::vector<std::vector<double
 {   
     auto size { values.size() };
     double weight {0};
-    //std::shared_ptr<typename Graph_t<T>::Vertex_t> v_from {nullptr};
-    //std::shared_ptr<typename Graph_t<T>::Vertex_t> v_to   {nullptr};
 
     for (uint32_t i=0; i<size; ++i) {
-        //v_from = addVertex(values[i]);
         for (uint32_t j=0; j<size; ++j)
         {
-            //if (i == j) v_to = v_from; 
-            //else        v_to = addVertex(values[j]);
             weight = adjacency_matrix[i][j];
             if (weight) addEdge(values[i], values[j], weight);
         }
@@ -65,7 +59,7 @@ addEdge(T1&& from, T1&& to, double weight, bool undirected)
 template<typename T>
 template<typename T1>
 void Graph_t<T>::
-DFS(T1&& b, T1&& t) const
+DFS(T1&& b, T1&& t)
 {   
     T begin  { std::forward<T1>(b) };
     T tarjet { std::forward<T1>(t) };
@@ -75,9 +69,76 @@ DFS(T1&& b, T1&& t) const
     assert(it_begin  != end(_vertices) && "[DFS]: begin value not found.");
     assert(it_tarjet != end(_vertices) && "[DFS]: tarjet value not found.");
 
-    std::shared_ptr<Vertex_t> v_begin  = (*it_begin).second;
-    std::shared_ptr<Vertex_t> v_tarjet = (*it_tarjet).second;
-    
+    Vertex_t& v_begin  = *(*it_begin).second.get();
+    Vertex_t& v_target = *(*it_tarjet).second.get();
+    //std::cout<< "begin: "<< v_begin << " tarjet: "<< v_target<<"\n";
+    Stack_t<Vertex_t*> stack;
+
+    DFS_impl(v_begin, v_target, stack);
+}
+
+template<typename T>
+void Graph_t<T>::
+DFS_impl(Vertex_t& v_begin, Vertex_t& v_target, Stack_t<Vertex_t*>& stack)
+{
+
+    v_begin._visited = 1;
+    std::cout<<v_begin._value<<" ";
+    if (v_begin._value == v_target._value) { std::cout<<"!"; }
+
+    //stack.push(&v_begin);
+    //stack.show();
+
+    for (auto const& neighbor : v_begin._neighbors){
+        Vertex_t* v_neighbor  = neighbor.first.get();
+        if (!v_neighbor->_visited){
+            //std::cout<<v_begin._value<<"-"<<v_neighbor->_value <<'\n';
+            DFS_impl(*v_neighbor, v_target, stack);
+        }
+    }
+    //_stack_visited.pop();
+}
+
+
+template<typename T>
+template<typename T1>
+void Graph_t<T>::
+BFS(T1&& b, T1&& t)
+{  
+    T begin  { std::forward<T1>(b) };
+    T tarjet { std::forward<T1>(t) };
+
+    auto it_begin  = _vertices.find(&begin);
+    auto it_tarjet = _vertices.find(&tarjet);
+    assert(it_begin  != end(_vertices) && "[DFS]: begin value not found.");
+    assert(it_tarjet != end(_vertices) && "[DFS]: tarjet value not found.");
+
+    Vertex_t& v_begin  = *(*it_begin).second.get();
+    Vertex_t& v_target = *(*it_tarjet).second.get();
+
+    Queue_t<Vertex_t*> queque;
+    BFS_impl(v_begin, v_target, queque);
+}
+
+template<typename T>
+void Graph_t<T>::
+BFS_impl(Vertex_t& v_begin, Vertex_t& v_target, Queue_t<Vertex_t*>& queque)
+{
+    v_begin._visited = 1;
+    std::cout<<v_begin._value<<" ";
+    if (v_begin._value == v_target._value) { std::cout<<"!"; }
+
+    for (auto const& neighbor : v_begin._neighbors){
+        Vertex_t* v_neighbor = neighbor.first.get();
+        if (!v_neighbor->_visited) queque.enqueue(v_neighbor);
+    }
+
+    Vertex_t** v_first = queque.get();
+    if (v_first){
+        std::cout<<"aca: "<<(*v_first)->_value;
+        queque.dequeue();
+        BFS_impl(**v_first, v_target, queque);
+    }
 }
 
 }

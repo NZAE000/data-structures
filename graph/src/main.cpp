@@ -1,6 +1,6 @@
 #include"graph.cpp"
 #include<string>
-
+#define NDEBUG
 
 
 int 
@@ -43,6 +43,8 @@ main(void)
             {0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0}
         }
     };
+
+    graph3.DFS("A", "z");
 
     std::cout<<graph3;
 }

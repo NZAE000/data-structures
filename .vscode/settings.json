@@ -63,6 +63,12 @@
         "chrono": "cpp",
         "compare": "cpp",
         "concepts": "cpp",
-        "map": "cpp"
+        "map": "cpp",
+        "__tree": "cpp",
+        "deque": "cpp",
+        "print": "cpp",
+        "queue": "cpp",
+        "stack": "cpp",
+        "iterator": "cpp"
     }
 }

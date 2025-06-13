@@ -1,4 +1,6 @@
 #include"graph.hpp"
+#include<cassert>
+#include "../../stack/src/stack.cpp"
 
 namespace TDA {
 
@@ -63,10 +65,18 @@ addEdge(T1&& from, T1&& to, double weight, bool undirected)
 template<typename T>
 template<typename T1>
 void Graph_t<T>::
-DFS(T1 const& begin, T1 const& tarjet) const
-{
-    std::shared_ptr<Vertex_t> v_begin = this->_vertices[begin&];
+DFS(T1&& b, T1&& t) const
+{   
+    T begin  { std::forward<T1>(b) };
+    T tarjet { std::forward<T1>(t) };
 
+    auto it_begin  = _vertices.find(&begin);
+    auto it_tarjet = _vertices.find(&tarjet);
+    assert(it_begin  != end(_vertices) && "[DFS]: begin value not found.");
+    assert(it_tarjet != end(_vertices) && "[DFS]: tarjet value not found.");
+
+    std::shared_ptr<Vertex_t> v_begin  = (*it_begin).second;
+    std::shared_ptr<Vertex_t> v_tarjet = (*it_tarjet).second;
     
 }
 

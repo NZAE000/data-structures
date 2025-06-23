@@ -17,6 +17,6 @@
 template<typename TYPE>
 struct Node_t {
 
-    TYPE           _value{0};
+    TYPE           _value;
     Node_t<TYPE>*  _next{nullptr};
 };

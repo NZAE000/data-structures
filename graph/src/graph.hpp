@@ -4,7 +4,8 @@
 #include<vector>
 #include<memory>
 #include<map>
-
+#include "../../stack/src/stack.cpp"
+#include "../../queue/src/queue.cpp"
 /*
 
 Implementación de grafo eficiente:
@@ -50,6 +51,7 @@ struct Graph_t {
         Vertex_t(const T& val) : _value{val} {}
 
         T _value;
+        uint8_t _visited {0};
         std::vector<std::pair<std::shared_ptr<Vertex_t>, double>> _neighbors;
         
         friend std::ostream& operator<<(std::ostream& os, Vertex_t const& v) {
@@ -65,6 +67,12 @@ struct Graph_t {
 
     template<typename T1>
     void addEdge(T1&& from, T1&& to, double weight, bool undirected = false);
+
+    template<typename T1>
+    void DFS(T1&& begin, T1&& target);
+
+    template<typename T1>
+    void BFS(T1&& begin, T1&& target);
 
     friend std::ostream& operator<<(std::ostream& os, Graph_t<T> const& g)
     {
@@ -84,6 +92,8 @@ private:
 
     template<typename T1>
     std::shared_ptr<Vertex_t> addVertex(T1&& value); // User don't access.
+    void DFS_impl(Vertex_t& begin, Vertex_t& target, Stack_t<Vertex_t*>&);
+    void BFS_impl(Vertex_t& begin, Vertex_t& target, Queue_t<Vertex_t*>&);
 };
 
 } // namespace TDA
